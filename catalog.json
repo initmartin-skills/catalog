@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "title": "Martin’s Skills Library",
+  "owner": "initmartin-alt",
+  "organization": "initmartin-skills",
+  "categories": [
+    "design",
+    "development",
+    "content",
+    "office",
+    "automation"
+  ],
+  "skills": [
+    {
+      "id": "oil-oil.oil-ui",
+      "name": "oil-ui",
+      "summary": "为界面设计探索方向、细化方案和评审真实截图。",
+      "category": "design",
+      "tags": [
+        "ui",
+        "ux",
+        "codex"
+      ],
+      "upstream": "oil-oil/oil-ui",
+      "fork": "initmartin-skills/oil-ui",
+      "path": ".",
+      "commit": "a3343469e422078a1433d38eb9a5915df256ddc2",
+      "license": "MIT",
+      "status": "saved",
+      "reviewed_at": null,
+      "customized": false,
+      "used_in": [],
+      "notes": "已迁移至技能组织，保留原作者、Fork 关系与固定提交；未安装或试用。"
+    }
+  ],
+  "packs": {
+    "design": [],
+    "apple-development": [],
+    "content": []
+  }
+}
