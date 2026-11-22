@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "checked_date": "2026-11-22",
+  "repositories": {
+    "1467196281": {
+      "id": 1467196281,
+      "full_name": "initmartin-skills/oil-ui",
+      "upstream": "oil-oil/oil-ui",
+      "head": "a3343469e422078a1433d38eb9a5915df256ddc2",
+      "skills": [
+        {
+          "id": "gh-1467196281-cdb4ee2aea69cc6a",
+          "repository_id": 1467196281,
+          "blob_sha": "41bfe836e0ea894fa01af41c7aea0c9f7a737e7b",
+          "extracted": {
+            "name": "oil-ui",
+            "description": "UI/UX design skill for Claude Code, Cursor, Codex & AI coding agents: design, refine, and review frontend interfaces for websites, apps, dashboards, and components with visual direction exploration, 3-direction side-by-side HTML comparison on request, DESIGN.md conflict checks, and real-browser screenshot & lightweight UX review. Defers to oil-ui-pro when installed. 设计、改进和评审网站、App、后台与组件的界面：探索设计方向、按需生成多风格同屏对比页、排查设计规范（DESIGN.md）冲突，并基于真实截图打磨视觉层级；按请求交付对比页、设计说明、设计稿或可运行界面。只负责设计判断，不用于纯业务逻辑、接口构建、无界面变化的代"
+          },
+          "metadata_error": null,
+          "name": "oil-ui",
+          "summary": "UI/UX design skill for Claude Code, Cursor, Codex & AI coding agents: design, refine, and review frontend interfaces for websites, apps, dashboards, and components with visual direction exploration, 3-direction side-by-side HTML comparison on request, DESIGN.md conflict checks, and real-browser screenshot & lightweight UX review. Defers to oil-ui-pro when installed. 设计、改进和评审网站、App、后台与组件的界面：探索设计方向、按需生成多风格同屏对比页、排查设计规范（DESIGN.md）冲突，并基于真实截图打磨视觉层级；按请求交付对比页、设计说明、设计稿或可运行界面。只负责设计判断，不用于纯业务逻辑、接口构建、无界面变化的代",
+          "category": "inbox",
+          "tags": [
+            "auto-imported",
+            "agent-skills",
+            "ui-design"
+          ],
+          "upstream": "oil-oil/oil-ui",
+          "fork": "initmartin-skills/oil-ui",
+          "path": ".",
+          "commit": "a3343469e422078a1433d38eb9a5915df256ddc2",
+          "license": "MIT",
+          "status": "saved",
+          "reviewed_at": null,
+          "customized": false,
+          "used_in": [],
+          "notes": "自动收录；尚未审阅或安装。许可证来自仓库元数据，采用前需核对具体技能。"
+        }
+      ],
+      "available": true,
+      "error": null,
+      "signature": [
+        "initmartin-skills/oil-ui",
+        "2026-11-21T08:58:37Z",
+        "2026-11-22T05:16:59Z",
+        "main"
+      ]
+    }
+  }
+}
