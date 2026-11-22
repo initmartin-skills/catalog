@@ -8,7 +8,8 @@
     "development",
     "content",
     "office",
-    "automation"
+    "automation",
+    "inbox"
   ],
   "skills": [
     {
@@ -30,7 +31,8 @@
       "reviewed_at": null,
       "customized": false,
       "used_in": [],
-      "notes": "已迁移至技能组织，保留原作者、Fork 关系与固定提交；未安装或试用。"
+      "notes": "已迁移至技能组织，保留原作者、Fork 关系与固定提交；未安装或试用。",
+      "repository_id": 1467196281
     }
   ],
   "packs": {

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Validate and build a metadata-only skills catalog. Python 3.10+, standard library."""
 import argparse
+import copy
 import datetime as dt
 import html
 import json
@@ -15,6 +16,63 @@ REPO = re.compile(r"[A-Za-z0-9-]+/[A-Za-z0-9_.-]+")
 SLUG = re.compile(r"[a-z0-9]+(?:[._-][a-z0-9]+)*")
 SHA = re.compile(r"[0-9a-f]{40}")
 ROOT = Path(__file__).resolve().parents[1]
+
+def merge_catalog(curated, discovered):
+    """Manual records win; automation never changes their adopted commit or review state."""
+    data = copy.deepcopy(curated)
+    if discovered.get("schema_version") != 1:
+        raise ValueError("unsupported discovery schema")
+    if "inbox" not in data["categories"]:
+        data["categories"].append("inbox")
+    repositories = discovered.get("repositories", {})
+    automatic = []
+    for repo in repositories.values():
+        for skill in repo.get("skills", []):
+            row = copy.deepcopy(skill)
+            row.pop("extracted", None)
+            row["source_status"] = ("unavailable" if not repo.get("available", True)
+                                    else "scan-error" if repo.get("error") else "available")
+            automatic.append(row)
+    claimed = set()
+    for manual in data["skills"]:
+        for auto in automatic:
+            same_repository = (manual.get("repository_id") == auto.get("repository_id")
+                               if manual.get("repository_id") else manual.get("fork") == auto.get("fork"))
+            if manual["id"] == auto["id"] or (same_repository and manual["path"] == auto["path"]):
+                claimed.add(auto["id"])
+                manual["latest_commit"] = auto["commit"]
+                manual["source_status"] = auto["source_status"]
+                # A repository transfer/rename changes its address, not the adopted version.
+                manual["fork"] = auto["fork"]
+                break
+        else:
+            repo = repositories.get(str(manual.get("repository_id")))
+            if repo:
+                manual["source_status"] = "missing-skill"
+    data["skills"].extend(s for s in automatic if s["id"] not in claimed)
+    data["_discovery"] = {
+        "checked_date": discovered.get("checked_date", ""),
+        "repositories": len(repositories),
+        "errors": sum(bool(r.get("error")) for r in repositories.values())
+    }
+    return data
+
+
+def load_catalog(root=ROOT):
+    curated = json.loads((root / "catalog.json").read_text(encoding="utf-8"))
+    path = root / "discovered.json"
+    return merge_catalog(curated, json.loads(path.read_text(encoding="utf-8"))) if path.exists() else curated
+
+
+def source_note(skill):
+    status = skill.get("source_status")
+    if status in ("unavailable", "scan-error", "missing-skill"):
+        return {"unavailable": "来源暂不可用，保留历史记录。",
+                "scan-error": "本次扫描不完整；部分信息可能来自上次记录。",
+                "missing-skill": "最新目录中未找到此技能，保留已采用记录。"}[status]
+    if skill.get("latest_commit") and skill["latest_commit"] != skill["commit"]:
+        return "来源已有更新；仍保留已采用版本。"
+    return ""
 
 def fail(message):
     raise ValueError(message)
@@ -97,19 +155,23 @@ def file_url(s, repo=None):
     return "https://github.com/" + (repo or s["fork"] or s["upstream"]) + "/blob/" + s["commit"] + "/" + quote(str(path), safe="/")
 
 def command(s, agent="codex"):
-    if s["status"] != "approved":
+    if s["status"] != "approved" or s.get("source_status") in ("unavailable", "scan-error", "missing-skill"):
         return None
     source = (s["fork"] or s["upstream"]) + "@" + s["commit"]
     return "npx skills add " + shlex.quote(source) + " --skill " + shlex.quote(s["name"]) + " -a " + shlex.quote(agent)
 
 def markdown(data):
     lines = ["# " + md_cell(data["title"]), "", "按用途保存，按验证版本使用。", "", "[打开可搜索目录](https://initmartin-skills.github.io/catalog/) · [维护说明](MAINTAINING.md) · [组织主页](https://github.com/initmartin-skills)", "",
-             "此文件由 scripts/build_catalog.py 根据 catalog.json 生成。元数据校验不代表技能已通过内容、安全或效果审阅。", "",
+             "自动扫描组织和个人账号的公开 Fork。新条目进入 inbox（待分类）/ saved；catalog.json 中的手工记录优先，采用版本不会被自动更新。", "",
+             "[手动立即扫描](https://github.com/initmartin-skills/catalog/actions/workflows/sync-catalog.yml) · [扫描来源配置](sources.json)", "",
              "| Skill | 用途 | 分类 | 状态 | 采用提交 | 来源 |", "| --- | --- | --- | --- | --- | --- |"]
     for s in sorted(data["skills"], key=lambda x: (x["category"], x["id"])):
-        lines.append("| [" + md_cell(s["name"]) + "](" + file_url(s) + ") | " + md_cell(s["summary"]) + " | " + s["category"] + " | " + s["status"] + " | " + s["commit"][:10] + " | " + md_cell(s["upstream"]) + " |")
+        lines.append("| [" + md_cell(s["name"]) + "](" + file_url(s) + ") | " + md_cell(s["summary"]) + " | " + s["category"] + " | " + s["status"] + " | " + s["commit"][:10] + " | " + md_cell(s["upstream"]) + (" · " + source_note(s) if source_note(s) else "") + " |")
     if not data["skills"]:
         lines.append("| 尚未收录 | — | — | — | — | — |")
+    info = data.get("_discovery", {})
+    if info:
+        lines += ["", "最近检查（北京时间）：" + str(info["checked_date"]) + " · 来源仓库：" + str(info["repositories"]) + " · 异常：" + str(info["errors"])]
     lines += ["", "## 常用包", ""]
     for name, ids in data["packs"].items():
         lines.append("- **" + name + "**：" + (", ".join(ids) if ids else "尚未选定已验证条目"))
@@ -146,9 +208,11 @@ def webpage(data):
         install = command(s)
         block = "<pre><code>"+esc(install)+"</code></pre>" if install else "<p class='meta'>尚未批准使用；本页不提供安装操作。</p>"
         tags=" ".join("<span class='tag'>"+esc(t)+"</span>" for t in s["tags"])
-        cards.append("<article data-search=\""+esc(searchable)+"\" data-category=\""+esc(s["category"])+"\" data-status=\""+esc(s["status"])+"\"><div class='meta'>"+esc(s["category"])+" · "+esc(s["status"])+"</div><h2>"+esc(s["name"])+"</h2><p>"+esc(s["summary"])+"</p><div>"+tags+"</div><p class='meta'>来源 "+esc(s["upstream"])+"<br>固定版本 <code>"+esc(s["commit"][:12])+"</code><br>许可证 "+esc(s["license"])+"</p><a href=\""+esc(file_url(s))+"\">查看保存的技能版本 ↗</a>"+block+"<p class='meta'>"+esc(s["notes"])+"</p></article>")
-    options=lambda values:"".join("<option value=\""+esc(v)+"\">"+esc(v)+"</option>" for v in values)
-    return "<!doctype html><html lang='zh-CN'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>"+esc(data["title"])+"</title><style>"+CSS+"</style></head><body><main><div class='kicker'>MARTIN / SKILLS / CATALOG</div><h1>"+esc(data["title"])+"</h1><p>先保存，再验证。只把真正有用的版本带进项目。</p><div class='controls'><label>搜索<input id='query' type='search' placeholder='技能、用途或标签'></label><label>分类<select id='category'><option value=''>全部分类</option>"+options(data["categories"])+"</select></label><label>采用状态<select id='state'><option value=''>全部状态</option>"+options(STATUSES)+"</select></label></div><p id='count' aria-live='polite'></p><section>"+"".join(cards)+"</section><p id='empty' hidden>没有匹配项，换个关键词试试。</p><footer>由 catalog.json 生成 · Martin’s Skills Library<br>无外部字体、统计、API或自动安装行为。来源与采用版本以目录记录为准。</footer></main><script>"+JS+"</script></body></html>"
+        cards.append("<article data-search=\""+esc(searchable)+"\" data-category=\""+esc(s["category"])+"\" data-status=\""+esc(s["status"])+"\"><div class='meta'>"+esc(s["category"])+" · "+esc(s["status"])+"</div><h2>"+esc(s["name"])+"</h2><p>"+esc(s["summary"])+"</p><div>"+tags+"</div><p class='meta'>来源 "+esc(s["upstream"])+"<br>固定版本 <code>"+esc(s["commit"][:12])+"</code><br>许可证 "+esc(s["license"])+"</p><a href=\""+esc(file_url(s))+"\">查看保存的技能版本 ↗</a>"+block+"<p class='meta'>"+esc((source_note(s)+" "+s["notes"]).strip())+"</p></article>")
+    info=data.get("_discovery", {})
+    scan_info=("最近检查（北京时间）："+esc(info.get("checked_date", ""))+" · 来源仓库："+esc(info.get("repositories", 0))+" · 异常："+esc(info.get("errors", 0))) if info else ""
+    options=lambda values:"".join("<option value=\""+esc(v)+"\">"+esc("待分类" if v == "inbox" else v)+"</option>" for v in values)
+    return "<!doctype html><html lang='zh-CN'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>"+esc(data["title"])+"</title><style>"+CSS+"</style></head><body><main><div class='kicker'>MARTIN / SKILLS / CATALOG</div><h1>"+esc(data["title"])+"</h1><p>公开 Fork 自动收录，新技能先进入待分类。手工记录与已采用版本始终保留。</p><p class='meta'>"+scan_info+" · <a href='https://github.com/initmartin-skills/catalog/actions/workflows/sync-catalog.yml'>立即扫描</a></p><div class='controls'><label>搜索<input id='query' type='search' placeholder='技能、用途或标签'></label><label>分类<select id='category'><option value=''>全部分类</option>"+options(data["categories"])+"</select></label><label>采用状态<select id='state'><option value=''>全部状态</option>"+options(STATUSES)+"</select></label></div><p id='count' aria-live='polite'></p><section>"+"".join(cards)+"</section><p id='empty' hidden>没有匹配项，换个关键词试试。</p><footer>由手工记录与自动扫描合并生成 · Martin’s Skills Library<br>无外部字体、统计、API或自动安装行为。来源与采用版本以目录记录为准。</footer></main><script>"+JS+"</script></body></html>"
 
 def main(argv=None):
     parser=argparse.ArgumentParser()
@@ -156,7 +220,7 @@ def main(argv=None):
     parser.add_argument("--validate",action="store_true",help="validate metadata without generating files")
     args=parser.parse_args(argv)
     try:
-        data=validate(json.loads((ROOT/"catalog.json").read_text(encoding="utf-8")))
+        data=validate(load_catalog())
         if args.validate:
             print("Catalog metadata valid; no skills executed.")
             return 0

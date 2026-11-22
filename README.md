@@ -4,11 +4,15 @@
 
 [打开可搜索目录](https://initmartin-skills.github.io/catalog/) · [维护说明](MAINTAINING.md) · [组织主页](https://github.com/initmartin-skills)
 
-此文件由 scripts/build_catalog.py 根据 catalog.json 生成。元数据校验不代表技能已通过内容、安全或效果审阅。
+自动扫描组织和个人账号的公开 Fork。新条目进入 inbox（待分类）/ saved；catalog.json 中的手工记录优先，采用版本不会被自动更新。
+
+[手动立即扫描](https://github.com/initmartin-skills/catalog/actions/workflows/sync-catalog.yml) · [扫描来源配置](sources.json)
 
 | Skill | 用途 | 分类 | 状态 | 采用提交 | 来源 |
 | --- | --- | --- | --- | --- | --- |
 | [oil-ui](https://github.com/initmartin-skills/oil-ui/blob/a3343469e422078a1433d38eb9a5915df256ddc2/SKILL.md) | 为界面设计探索方向、细化方案和评审真实截图。 | design | saved | a3343469e4 | oil-oil/oil-ui |
+
+最近检查（北京时间）：2026-11-22 · 来源仓库：1 · 异常：0
 
 ## 常用包
 

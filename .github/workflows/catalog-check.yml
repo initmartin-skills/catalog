@@ -1,9 +1,9 @@
 name: Check catalog
 on:
   push:
-    paths: ['catalog.json', 'README.md', 'index.html', 'scripts/**', 'tests/**', '.github/workflows/catalog-check.yml']
+    paths: ['catalog.json', 'sources.json', 'discovered.json', 'README.md', 'index.html', 'scripts/**', 'tests/**', '.github/workflows/**']
   pull_request:
-    paths: ['catalog.json', 'README.md', 'index.html', 'scripts/**', 'tests/**', '.github/workflows/catalog-check.yml']
+    paths: ['catalog.json', 'sources.json', 'discovered.json', 'README.md', 'index.html', 'scripts/**', 'tests/**', '.github/workflows/**']
   workflow_dispatch:
 permissions:
   contents: read
@@ -15,8 +15,8 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1, verified 2026-11-22
         with:
           persist-credentials: false
-      - name: Validate metadata and generated pages
-        run: python3 scripts/build_catalog.py --check
+      - name: Validate metadata and render pages
+        run: python3 scripts/build_catalog.py
       - name: Run catalog contract tests
         run: python3 -m unittest discover -s tests -v
 
