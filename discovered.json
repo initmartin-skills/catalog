@@ -45,6 +45,75 @@
         "2026-11-22T05:16:59Z",
         "main"
       ]
+    },
+    "1467564689": {
+      "id": 1467564689,
+      "full_name": "initmartin-alt/ai-visual-prompt-cookbook",
+      "upstream": "VigoZhao/AI-Visual-Prompt-Cookbook",
+      "head": "9450e181fadabff91cc7413d640d94a8416e8446",
+      "skills": [],
+      "available": true,
+      "error": null,
+      "signature": [
+        "initmartin-alt/ai-visual-prompt-cookbook",
+        "2026-11-19T15:07:36Z",
+        "2026-11-22T13:01:23Z",
+        "main"
+      ]
+    },
+    "1467584804": {
+      "id": 1467584804,
+      "full_name": "initmartin-alt/stickman-video-director",
+      "upstream": "CryptoYuyyy02/stickman-video-director",
+      "head": "eda39dc083c32df0066611a9dc8e84067989044d",
+      "skills": [
+        {
+          "id": "gh-1467584804-cdb4ee2aea69cc6a",
+          "repository_id": 1467584804,
+          "blob_sha": "d05cf9ee0a9025c454213eeb8cd057bae8eb4b36",
+          "extracted": {},
+          "metadata_error": null,
+          "name": "stickman-video-director",
+          "summary": "火柴人视频导演 Skill for Muse — stickman story video production skill (scene generation, voiceover, BGM, editing)",
+          "category": "inbox",
+          "tags": [
+            "auto-imported"
+          ],
+          "upstream": "CryptoYuyyy02/stickman-video-director",
+          "fork": "initmartin-alt/stickman-video-director",
+          "path": ".",
+          "commit": "eda39dc083c32df0066611a9dc8e84067989044d",
+          "license": "未识别；需核对来源许可",
+          "status": "saved",
+          "reviewed_at": null,
+          "customized": false,
+          "used_in": [],
+          "notes": "自动收录；尚未审阅或安装。许可证来自仓库元数据，采用前需核对具体技能。"
+        }
+      ],
+      "available": true,
+      "error": null,
+      "signature": [
+        "initmartin-alt/stickman-video-director",
+        "2026-11-20T13:23:29Z",
+        "2026-11-22T13:24:27Z",
+        "main"
+      ]
+    },
+    "1467589724": {
+      "id": 1467589724,
+      "full_name": "initmartin-alt/aerial-tv",
+      "upstream": "pengchujin/aerial-tv",
+      "head": "695e4a16c9e752a26fb2d8ce72ab3fddca02fd9a",
+      "skills": [],
+      "available": true,
+      "error": null,
+      "signature": [
+        "initmartin-alt/aerial-tv",
+        "2026-11-22T02:48:03Z",
+        "2026-11-22T13:30:11Z",
+        "main"
+      ]
     }
   }
 }
