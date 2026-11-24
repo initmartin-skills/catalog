@@ -13,7 +13,7 @@
 | [oil-ui](https://github.com/initmartin-skills/oil-ui/blob/a3343469e422078a1433d38eb9a5915df256ddc2/SKILL.md) | 为界面设计探索方向、细化方案和评审真实截图。 | design | saved | a3343469e4 | oil-oil/oil-ui |
 | [stickman-video-director](https://github.com/initmartin-alt/stickman-video-director/blob/eda39dc083c32df0066611a9dc8e84067989044d/SKILL.md) | 火柴人视频导演 Skill for Muse — stickman story video production skill (scene generation, voiceover, BGM, editing) | inbox | saved | eda39dc083 | CryptoYuyyy02/stickman-video-director |
 
-最近检查（北京时间）：2026-11-24 · 来源仓库：4 · 异常：0
+最近检查（北京时间）：2026-11-25 · 来源仓库：4 · 异常：0
 
 ## 常用包
 
