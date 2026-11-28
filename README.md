@@ -180,7 +180,7 @@
 | [audit-prep-assistant](https://github.com/initmartin-alt/trailofbits-skills/blob/149d7b21f4067765b82e67029730b42d228ef4b4/plugins/building-secure-contracts/skills/audit-prep-assistant/SKILL.md) | Prepares codebases for security review using Trail of Bits' checklist. Helps set review goals, runs static analysis tools, increases test coverage, removes dead code, ensures accessibility, and generates documentation (flowcharts, user stories, inline comments). Use when preparing your own codebase to be audited by someone else, getting a repository review-ready before an external security review, deciding what to fix before auditors start, or asking what assessors need from a project. For under | inbox | saved | 149d7b21f4 | trailofbits/skills |
 | [genotoxic](https://github.com/initmartin-alt/trailofbits-skills/blob/149d7b21f4067765b82e67029730b42d228ef4b4/plugins/trailmark/skills/genotoxic/SKILL.md) | Graph-informed mutation testing triage. Parses codebases with Trailmark, runs mutation testing and necessist, then uses survived mutants, unnecessary test statements, and call graph data to identify false positives, missing test coverage, and fuzzing targets. Use when triaging survived mutants, analyzing mutation testing results, identifying test gaps, finding fuzzing targets from weak tests, running mutation frameworks (including circomvent and cairo-mutants), or using necessist. | inbox | saved | 149d7b21f4 | trailofbits/skills |
 
-最近检查（北京时间）：2026-11-28 · 来源仓库：9 · 异常：0
+最近检查（北京时间）：2026-11-28 · 来源仓库：10 · 异常：0
 
 ## 常用包
 
